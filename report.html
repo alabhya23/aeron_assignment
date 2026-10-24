@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather Station Data Quality Report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182624;
+      --muted: #53645f;
+      --line: #d7dfd8;
+      --paper: #fbfaf5;
+      --green: #1e6452;
+      --green-pale: #e8f1e9;
+      --amber: #9b5b16;
+      --amber-pale: #f7eedc;
+      --red: #9e4237;
+      --red-pale: #f7e9e4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.48 Georgia, "Times New Roman", serif;
+    }
+    main { max-width: 920px; margin: 0 auto; padding: 36px 44px 48px; }
+    header { border-bottom: 2px solid var(--green); padding-bottom: 20px; }
+    .eyebrow {
+      color: var(--green);
+      font: 700 11px/1.2 "Trebuchet MS", sans-serif;
+      text-transform: uppercase;
+    }
+    h1 { margin: 9px 0 5px; font-size: 34px; line-height: 1.08; }
+    .subhead { color: var(--muted); margin: 0; }
+    h2 {
+      margin: 24px 0 8px;
+      font: 700 17px/1.2 "Trebuchet MS", sans-serif;
+    }
+    p { margin: 7px 0; }
+    .summary {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--green);
+      background: var(--green-pale);
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-block: 1px solid var(--line);
+      margin: 16px 0 18px;
+    }
+    .metric { padding: 11px 12px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric strong { display: block; font: 700 21px/1.1 "Trebuchet MS", sans-serif; }
+    .metric span { display: block; color: var(--muted); font: 12px/1.3 "Trebuchet MS", sans-serif; }
+    .findings { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .findings th, .findings td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 9px;
+    }
+    .findings th { color: var(--muted); font: 700 11px/1.25 "Trebuchet MS", sans-serif; }
+    .tag { font: 700 11px/1.2 "Trebuchet MS", sans-serif; white-space: nowrap; }
+    .exclude { color: var(--red); }
+    .correct { color: var(--green); }
+    .keep { color: var(--amber); }
+    .recommendation {
+      padding: 13px 16px;
+      background: var(--amber-pale);
+      border-left: 4px solid var(--amber);
+    }
+    footer { margin-top: 22px; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    @media (max-width: 620px) {
+      main { padding: 24px 18px; }
+      h1 { font-size: 28px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .findings th, .findings td { padding: 7px 5px; }
+    }
+    @media print {
+      @page { size: letter; margin: 0.55in; }
+      body { font-size: 11px; line-height: 1.35; }
+      main { max-width: none; padding: 0; }
+      h1 { font-size: 26px; }
+      h2 { margin-top: 15px; font-size: 14px; }
+      .metrics { margin: 10px 0; }
+      .metric { padding: 7px 9px; }
+      .findings th, .findings td { padding: 5px 7px; }
+      footer { margin-top: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Field Operations / Data Review</div>
+      <h1>Weather Station Data Quality</h1>
+      <p class="subhead">Eight-station screening summary · March–April 2025</p>
+    </header>
+
+    <section class="summary" aria-label="Executive summary">
+      <strong>Executive summary.</strong>
+      The checker identified 373 flags across eight stations. Most readings remain usable when their own channel and timestamp pass review; a flag is a screening result, not proof that an entire station is unreliable. Preserve the raw files and apply corrections only where the evidence supports them.
+    </section>
+
+    <div class="metrics" aria-label="Flag totals">
+      <div class="metric"><strong>373</strong><span>total flags</span></div>
+      <div class="metric"><strong>198</strong><span>keep / review</span></div>
+      <div class="metric"><strong>144</strong><span>exact duplicates</span></div>
+      <div class="metric"><strong>31</strong><span>range exclusions</span></div>
+    </div>
+
+    <section>
+      <h2>Usable data and priority findings</h2>
+      <p>Retain channels and periods that pass their checks. Exclusions below apply to affected measurements only, not every channel from that station.</p>
+      <table class="findings">
+        <thead>
+          <tr><th>Station</th><th>Evidence</th><th>Recommended handling</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>S03</strong></td>
+            <td>Two temperature readings of 85°C, on March 12 and April 8, are outside the broad screening range.</td>
+            <td><span class="tag exclude">EXCLUDE</span> Those temperature samples only; retain other channels if they pass checks.</td>
+          </tr>
+          <tr>
+            <td><strong>S05</strong></td>
+            <td>451 raw relative-humidity readings exceed 100% from March 7–11. The checker represents these as 29 grouped range flags, not 29 readings. A March 10 note says humidity appeared to read 100 all week.</td>
+            <td><span class="tag exclude">EXCLUDE</span> Affected humidity samples. Do not invent replacement values; compare the sensor with a reference.</td>
+          </tr>
+          <tr>
+            <td><strong>S06</strong></td>
+            <td>36 timestamps have conflicting weather rows from March 24, 10:10–16:00 UTC, coinciding with a battery swap and logger reboot.</td>
+            <td><span class="tag keep">KEEP</span> Preserve both candidates and investigate source records before choosing a record.</td>
+          </tr>
+          <tr>
+            <td><strong>S08</strong></td>
+            <td>144 exact duplicate timestamp rows are flagged on April 5; the maintenance log mentions the website showing the same day twice.</td>
+            <td><span class="tag correct">CORRECT</span> Retain one copy after confirming all weather-channel values match.</td>
+          </tr>
+          <tr>
+            <td><strong>GPS</strong></td>
+            <td>160 RMC records report void status across the stations. The parser reads the status field; a void fix is not itself evidence that weather data is bad.</td>
+            <td><span class="tag keep">KEEP</span> Treat as GPS availability warnings. Do not exclude weather readings on this basis alone.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>A long constant temperature run at S03 (March 18 06:00 - March 21 14:00 UTC) is a review signal, not proof of a stuck sensor. S08 also has a data gap from March 16 13:50 to March 18 01:40 UTC; missing values cannot be reconstructed from that file alone.</p>
+    </section>
+
+    <section>
+      <h2>Technician recommendation</h2>
+      <div class="recommendation">
+        <strong>Prioritize S05 for a one-hour visit.</strong>
+        The repeated out-of-range humidity measurements are corroborated by the volunteer's observation that the display appeared fixed at 100. Inspect the RH sensor and its wiring, compare it with a calibrated reference, and document any adjustment or replacement. Do not mark the fault resolved until a post-visit comparison supports that conclusion.
+      </div>
+      <p>S06 is the second choice. Its conflicting records affect multiple channels and align with a logger reboot, but the identified conflict is confined to that historical window; first preserve both versions and check logger/source records. S05 offers a more direct sensor-level check for the visit.</p>
+    </section>
+
+    <section>
+      <h2>Limitations</h2>
+      <p>Rules use broad screening limits, not instrument calibration specifications. GPS records occur less often than weather readings; their 160 void statuses do not imply 160 station failures. Conflicting S06 rows remain unresolved, and exact duplicate handling assumes matching channel values are redundant. Unflagged measurements are not guaranteed accurate.</p>
+    </section>
+
+    <footer>Generated from the supplied station data pack. Raw input files are not modified by the checker.</footer>
+  </main>
+</body>
+</html>

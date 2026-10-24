@@ -1,0 +1,16 @@
+# Decisions
+
+## 1. Technician visit
+I recommend visiting S05. The raw data contains 451 `rh_pct` readings above 100% from March 7 through March 11; the checker groups these into 29 flagged intervals. The March 10 maintenance note independently reports that humidity appeared to stay at 100 all week. During a one-hour visit, I would inspect the humidity element, wiring, and logger configuration, then compare the sensor with a calibrated reference. I would record the results and only document a repair after a follow-up comparison. My second-best choice is S06: 36 timestamps have conflicting rows from 10:10 to 16:00 UTC on March 24, matching the battery replacement and reboot. I rank it lower because the evidence identifies a historical data conflict, not a confirmed ongoing sensor fault; both records should remain available while logger records are checked.
+
+## 2. Least-certain flag
+The S03 `long_constant_run` flag for `temp_c` from March 18 at 06:00 through March 21 at 14:00 is uncertain. The same temperature persisted across consecutive samples, which can indicate a stuck sensor. However, a stable temperature can also be real, and a constant run alone does not establish a sensor failure. I would compare the raw series with nearby stations and other S03 channels, then verify the sensor against a reference thermometer during a site visit.
+
+## 3. Where AI was wrong
+An AI response incorrectly said: “S05 looks like the stronger visit candidate: 29 out-of-range humidity readings span March 7–11, and the March 10 maintenance note independently mentions humidity reading 100 all week.” That confused the checker's 29 grouped range flags with the number of raw readings. The raw-data count is 451 readings above 100%; I verified it directly from S05.csv and corrected the report and recommendation to distinguish samples from grouped flags.
+
+## 4. Scaling to 500 stations
+I would run the checker in a scheduled pipeline with validated input schemas, explicit station metadata, and versioned rules. Each flag should retain its station, time range, rule, action, and evidence note; raw data should remain immutable. I would rank cases by severity and confidence, route ambiguous conflicts and sensor anomalies to human review, and monitor false positives against known cases before changing rules. GPS availability warnings would remain separate from weather-sensor exclusions. The current checker is a screening prototype and would need automated tests, logging, and operational monitoring before deployment at that scale.
+
+## 5. Solar noon at S04
+S04 is near 105.146° W longitude. On March 20, 2025, I estimate apparent solar noon at approximately 19:07 UTC, using longitude to estimate mean solar time and allowing for the equation of time. This is a manual approximation; exact coordinates and an astronomical calculation would refine it. Solar noon is useful for checking the broad timing of the irradiance curve, but clouds, terrain, and sensor condition mean it cannot prove that the irradiance sensor is accurate.
